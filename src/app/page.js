@@ -102,11 +102,15 @@ function InstagramIcon() {
 const styles = {
   root: { minHeight: '100vh', backgroundColor: '#f8f8f6', fontFamily: "'Georgia', 'Times New Roman', serif", color: '#1a1a1a' },
 
-  navbar: { position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(248,248,246,0.98)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #e8e8e4' },
+  navbar: {position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(248,248,246,0.98)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #e8e8e4' },
   navInner: { maxWidth: 1280, margin: '0 auto', padding: '0 16px', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   navLogo: { fontSize: 21, fontWeight: 600, letterSpacing: '0.06em' },
   navLinks: { display: 'flex', gap: 28, fontSize: 14 },
-  navLink: { textDecoration: 'none', color: '#555' },
+  navLink: { textDecoration: 'none', color: '#555' ,
+    '@media (max-width: 768px)': {
+    display: 'none'
+    }
+  },
   navActions: { display: 'flex', alignItems: 'center', gap: 14 },
 
   instagramBtn: { color: '#1a1a1a', padding: 6 },
@@ -203,16 +207,27 @@ function Navbar({ onCartOpen }) {
   const cart = useCart()
   const count = cartCount(cart)
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <nav style={styles.navbar}>
       <div style={styles.navInner}>
         <div style={styles.navLogo}>CAROLINE RAFFINÉ</div>
         
-        <div style={styles.navLinks}>
-          <a href="#" style={styles.navLink}>Coleção</a>
-          <a href="#" style={styles.navLink}>Sobre</a>
-          <a href="#" style={styles.navLink}>Contato</a>
-        </div>
+        {!isMobile && (
+          <div style={styles.navLinks}>
+            <a href="#" style={styles.navLink}>Coleção</a>
+            <a href="#" style={styles.navLink}>Sobre</a>
+            <a href="#" style={styles.navLink}>Contato</a>
+          </div>
+        )}
 
         <div style={styles.navActions}>
           <a href="https://www.instagram.com/rafa_mr_019/" target="_blank" style={styles.instagramBtn}>
