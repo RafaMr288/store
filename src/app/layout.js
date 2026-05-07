@@ -12,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "CAROLINE RAFFINÉ",
-  description: "As Melhores Roupas 2026",
+  title: "CLiveira Store",
+  description: "As Melhores Roupas aqui",
 };
 
 export default function RootLayout({ children }) {
