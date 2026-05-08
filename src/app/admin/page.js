@@ -408,7 +408,7 @@ function ProductRow({ product, onEdit, onDelete, onToggleStatus }) {
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition">
+      <div className="flex items-center gap-1.5 opacity-100 group-hover:opacity-100 transition">
         {/* Toggle status rápido */}
         <button
           onClick={() => onToggleStatus(product)}
