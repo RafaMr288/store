@@ -6,13 +6,10 @@ import { supabase } from '@/lib/supabase'
 // ─── CATEGORIAS ────────────────────────────────────────────────────────────
 const CATEGORIES = [
   { value: 'all', label: 'Tudo' },
-  { value: 'blazers', label: 'Blazers' },
-  { value: 'calcas', label: 'Calças' },
-  { value: 'vestidos', label: 'Vestidos' },
   { value: 'camisas', label: 'Camisas' },
-  { value: 'saias', label: 'Saias' },
-  { value: 'tops', label: 'Tops' },
-  { value: 'casacos', label: 'Casacos' },
+  { value: 'Calcinhas', label: 'Calcinhas' },
+  { value: 'Cropeeds', label: 'Croppeds' },
+  { value: 'Shorts', label: 'Shorts' },
   { value: 'conjuntos', label: 'Conjuntos' },
 ]
 
@@ -429,12 +426,6 @@ export default function StorePage() {
       <Navbar onCartOpen={() => setCartOpen(true)} />
       <Hero />
       <main id="produtos" style={styles.main}>
-        <div style={styles.mainHeader}>
-          <h2 style={styles.mainTitle}>Coleção</h2>
-          {!loading && !error && (
-            <p style={{ color: '#666' }}>{filteredProducts.length} peças disponíveis</p>
-          )}
-        </div>
         <FilterBar active={category} onChange={setCategory} search={search} onSearch={setSearch} />
         <ProductGrid products={filteredProducts} loading={loading} error={error} />
       </main>
