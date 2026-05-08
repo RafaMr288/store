@@ -80,7 +80,7 @@ function InstagramIcon() {
 
 // ─── STYLES ────────────────────────────────────────────────────────────────
 const styles = {
-  root: { minHeight: '100vh', backgroundColor: '#f5ede8', fontFamily: "'Georgia', 'Times New Roman', serif", color: '#2c1a12' },
+  root: { minHeight: '100vh', backgroundColor: '#f5ede8', fontfamily: 'Montserrat sans-serif', color: '#2c1a12' },
   navbar: { position: 'sticky', top: 0, zIndex: 100, backgroundColor: 'rgba(245,237,232,0.98)', backdropFilter: 'blur(10px)', borderBottom: '1px solid #d9b8a8' },
   navInner: { maxWidth: 1280, margin: '0 auto', padding: '0 16px', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
   navLogo: { fontSize: 21, fontWeight: 600, letterSpacing: '0.06em', color: '#2c1a12' },
