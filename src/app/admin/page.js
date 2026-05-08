@@ -20,6 +20,7 @@ const CATEGORIES = [
 ]
 
 const SIZE_OPTIONS = ['PP', 'P', 'M', 'G', 'GG', 'GGG', '34', '36', '38', '40', '42', '44', '46']
+const AUTH_KEY = 'admin_authed'
 
 // ─── Login Gate ───────────────────────────────────────────────────────────────
 
@@ -28,6 +29,23 @@ function LoginGate({ onAuth }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const [savedUser, setSavedUser] = useState(null)
+
+  // Ao montar, verifica se há usuário salvo no localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(AUTH_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (parsed?.username) {
+          setSavedUser(parsed.username)
+          setFields((p) => ({ ...p, username: parsed.username }))
+        }
+      }
+    } catch {
+      // ignora erros de parse
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -37,11 +55,25 @@ function LoginGate({ onAuth }) {
     const validUser = process.env.NEXT_PUBLIC_Admin_user
     const validPass = process.env.NEXT_PUBLIC_Password
     if (fields.username === validUser && fields.password === validPass) {
+      // Salva o usuário no localStorage (sem a senha, por segurança)
+      try {
+        localStorage.setItem(AUTH_KEY, JSON.stringify({ username: fields.username }))
+      } catch {
+        // ignora erros de storage
+      }
       onAuth()
     } else {
       setError('Usuário ou senha inválidos.')
     }
     setLoading(false)
+  }
+
+  const handleClearSaved = () => {
+    try {
+      localStorage.removeItem(AUTH_KEY)
+    } catch {}
+    setSavedUser(null)
+    setFields({ username: '', password: '' })
   }
 
   return (
@@ -56,17 +88,55 @@ function LoginGate({ onAuth }) {
             <p className="mt-1 text-sm text-zinc-500">Entre com suas credenciais</p>
           </div>
         </div>
+
+        {/* Banner de usuário salvo */}
+        {savedUser && (
+          <div className="mb-4 flex items-center justify-between rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <span className="text-base">👤</span>
+              <div>
+                <p className="text-xs font-semibold text-indigo-300">Usuário lembrado</p>
+                <p className="text-xs text-zinc-500">{savedUser}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleClearSaved}
+              className="text-[11px] text-zinc-600 hover:text-red-400 transition underline underline-offset-2"
+            >
+              Limpar
+            </button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Usuário</label>
-            <input name="username" value={fields.username} onChange={(e) => { setFields((p) => ({ ...p, username: e.target.value })); setError(null) }} placeholder="admin" required autoComplete="username"
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition" />
+            <input
+              name="username"
+              value={fields.username}
+              onChange={(e) => { setFields((p) => ({ ...p, username: e.target.value })); setError(null) }}
+              placeholder="admin"
+              required
+              autoComplete="username"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+            />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Senha</label>
             <div className="relative">
-              <input name="password" type={showPass ? 'text' : 'password'} value={fields.password} onChange={(e) => { setFields((p) => ({ ...p, password: e.target.value })); setError(null) }} placeholder="••••••••" required autoComplete="current-password"
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-zinc-600 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition" />
+              <input
+                name="password"
+                type={showPass ? 'text' : 'password'}
+                value={fields.password}
+                onChange={(e) => { setFields((p) => ({ ...p, password: e.target.value })); setError(null) }}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+                // Auto-foca na senha se o usuário já estiver salvo
+                autoFocus={!!savedUser}
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-zinc-600 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+              />
               <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition text-base" tabIndex={-1}>
                 {showPass ? '🙈' : '👁️'}
               </button>
@@ -86,7 +156,7 @@ function LoginGate({ onAuth }) {
             ) : '→ Entrar'}
           </button>
         </form>
-        <p className="mt-6 text-center text-xs text-zinc-600">Sessão encerrada ao recarregar a página.</p>
+        <p className="mt-6 text-center text-xs text-zinc-600">O usuário é lembrado para o próximo acesso.</p>
       </div>
     </div>
   )
@@ -169,7 +239,6 @@ function ProductForm({ initial, onSave, onCancel, loading }) {
     category: initial?.category ?? '',
     status: initial?.status ?? false,
   })
-  // tamanho como array internamente
   const [sizes, setSizes] = useState(() => {
     const t = initial?.tamanho
     if (!t) return []
@@ -210,7 +279,7 @@ function ProductForm({ initial, onSave, onCancel, loading }) {
         price,
         old_price,
         category: fields.category || null,
-        tamanho: sizes.join(','), // salva como "P,M,G,GG"
+        tamanho: sizes.join(','),
         status: fields.status,
       },
       file: fileSelected.current,
@@ -375,7 +444,6 @@ function ProductRow({ product, onEdit, onDelete, onToggleStatus }) {
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-semibold text-white">{product.name}</p>
-          {/* Status badge */}
           <span className={`flex-shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-black ${
             product.status
               ? 'bg-emerald-500/10 text-emerald-400'
@@ -412,7 +480,6 @@ function ProductRow({ product, onEdit, onDelete, onToggleStatus }) {
 
       {/* Actions */}
       <div className="flex items-center gap-1.5 opacity-100 group-hover:opacity-100 transition">
-        {/* Toggle status rápido */}
         <button
           onClick={() => onToggleStatus(product)}
           className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs transition ${
@@ -532,7 +599,6 @@ function AdminDashboard() {
     setLoading(false)
   }
 
-  // Toggle rápido de status direto na lista
   const handleToggleStatus = async (product) => {
     const { error } = await supabase
       .from('store')
@@ -654,6 +720,23 @@ function AdminDashboard() {
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
+
+  // Ao montar, verifica se já existe sessão salva no localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(AUTH_KEY)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        // Só considera autenticado se o username salvo bate com a env var
+        if (parsed?.username && parsed.username === process.env.NEXT_PUBLIC_Admin_user) {
+          setAuthed(true)
+        }
+      }
+    } catch {
+      // ignora erros
+    }
+  }, [])
+
   if (!authed) return <LoginGate onAuth={() => setAuthed(true)} />
   return <AdminDashboard />
 }
