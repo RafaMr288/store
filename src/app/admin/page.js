@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 
 const CATEGORIES = [
   { value: 'blazers', label: 'Blazers' },
+  { value: 'Body', label: 'Body' },
   { value: 'calcas', label: 'Calças' },
   { value: 'Calcinhas', label: 'Calcinhas' },
   { value: 'Shorts', label: 'Shorts' },
@@ -19,7 +20,7 @@ const CATEGORIES = [
   { value: 'conjuntos', label: 'Conjuntos' },
 ]
 
-const SIZE_OPTIONS = ['PP', 'P', 'M', 'G', 'GG', 'GGG', '34', '36', '38', '40', '42', '44', '46']
+const SIZE_OPTIONS = ['PP', 'P', 'P/M','M', 'G', 'G/GG', 'GG', 'GGG', '34', '36', '38', '40', '42', '44', '46']
 const AUTH_KEY = 'admin_authed'
 
 // ─── Login Gate ───────────────────────────────────────────────────────────────

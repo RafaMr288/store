@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 // ─── CATEGORIAS ────────────────────────────────────────────────────────────
 const CATEGORIES = [
   { value: 'all', label: 'Tudo' },
+  { value: 'Body', label: 'Body' },
   { value: 'camisas', label: 'Camisas' },
   { value: 'Calcinhas', label: 'Calcinhas' },
   { value: 'Cropeeds', label: 'Croppeds' },
